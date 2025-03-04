@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,7 @@ export class AppComponent implements OnInit {
   // Fetch user data
   fetchUserData(token: string) {
     this.http
-      .get('http://localhost:8000/api/todos/getuser', {
+      .get(`${environment.BASE_URL}/getuser`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .subscribe({

@@ -46,7 +46,7 @@ export class RegisterComponent {
   
       const headers = new HttpHeaders();
       // Don't set Content-Type, let Angular set it automatically with FormData
-  
+      console.log("hai");
       this.http.post<any>(`${environment.BASE_URL}/createuser`, formData, { headers }).subscribe(
         response => {
           if (response.status === 200) {
