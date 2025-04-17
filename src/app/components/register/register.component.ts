@@ -13,6 +13,7 @@ export class RegisterComponent {
 
   registerForm: FormGroup;
   errorMessage: string = '';
+  selectedImage: File | null = null;
 
   constructor(
     private http: HttpClient,
@@ -26,48 +27,50 @@ export class RegisterComponent {
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmpassword: ['', Validators.required], // Add confirmpassword control
       phone_number: ['', [Validators.required, Validators.minLength(10)]],
-      image: [null, Validators.required] // Initialize image control with null
+      image" [null]
+      //image: [null, Validators.required] Initialize image control with null
     });
   }
 
   onSubmit(): void {
-    if (this.registerForm.valid) {
-      const formData = new FormData();
-      console.log(formData,'data')
-  
-      // Append form data to the FormData object
-      Object.keys(this.registerForm.value).forEach(key => {
-        if (key === 'phone_number') {
-          formData.append('phone_Number', this.registerForm.get(key)!.value); // Change to phone_Number
-        } else {
-          formData.append(key, this.registerForm.get(key)!.value);
-        }
-      });
-  
-      const headers = new HttpHeaders();
-      // Don't set Content-Type, let Angular set it automatically with FormData
-      console.log("hai");
-      this.http.post<any>(`${environment.BASE_URL}/createuser`, formData, { headers }).subscribe(
-        response => {
-          if (response.status === 200) {
-            localStorage.setItem('accessToken', response.accessToken);
-            this.router.navigate(['/dashboard']);
-          }
-        },
-        error => {
-          console.error('Error:', error);
-          this.errorMessage = 'Failed to register user. Please try again.';
-        }
-      );
+  if (this.registerForm.valid) {
+    const formData = new FormData();
+
+    Object.keys(this.registerForm.value).forEach(key => {
+      if (key === 'phone_number') {
+        formData.append('phone_Number', this.registerForm.get(key)!.value);
+      } else if (key !== 'image') {
+        formData.append(key, this.registerForm.get(key)!.value);
+      }
+    });
+
+    if (this.selectedImage) {
+      formData.append('image', this.selectedImage);
     }
-  }
-  
+
+    const headers = new HttpHeaders();
+    
+    this.http.post<any>(`${environment.BASE_URL}/createuser`, formData, { headers }).subscribe(
+      response => {
+        if (response.status === 200) {
+          localStorage.setItem('accessToken', response.accessToken);
+          this.router.navigate(['/dashboard']);
+        }
+      },
+      error => {
+        console.error('Error:', error);
+        this.errorMessage = 'Failed to register user. Please try again.';
+       }
+     );
+   }
+ }
+
   
   onFileChange(event: any): void {
-    const file = event.target.files ? event.target.files[0] : null;
-    if (file) {
-      // Set the value of the image control to the file object
-      this.registerForm.patchValue({ image: file });
-    }
+  const file = event.target.files?.[0] || null;
+  if (file) {
+    this.selectedImage = file;
+    // optional: display preview, etc.
   }
+} 
 }
