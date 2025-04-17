@@ -27,7 +27,7 @@ export class RegisterComponent {
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmpassword: ['', Validators.required], // Add confirmpassword control
       phone_number: ['', [Validators.required, Validators.minLength(10)]],
-      image" [null]
+      image: [null]
       //image: [null, Validators.required] Initialize image control with null
     });
   }
